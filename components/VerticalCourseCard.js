@@ -96,9 +96,6 @@ const VerticalCourseCard = ({ containerStyle, course }) => {
                 </View>
 
             </View>
-
-            <Text></Text>
-
         </TouchableOpacity>
     )
 }

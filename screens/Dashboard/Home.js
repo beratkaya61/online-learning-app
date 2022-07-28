@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { CategoryCard, SectionField } from '../../components';
+import HorizontalCourseCard from '../../components/HorizontalCourseCard';
 import IconButton from '../../components/IconButton';
 import LineDivider from '../../components/LineDivider';
 import TextButton from '../../components/TextButton';
@@ -195,6 +196,44 @@ const Home = () => {
         )
     }
 
+    function renderPopularCourses() {
+        return (
+            <SectionField
+                title="Popular Courses"
+                containerStyle={{
+                    marginTop: SIZES.padding,
+                }}
+            >
+                <FlatList
+                    data={dummyData.courses_list_2}
+                    listKey="Popular Courses"
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        marginTop: SIZES.padding,
+                    }}
+                    keyExtractor={(item) => `Popular Courses-${item.id}`}
+                    renderItem={({ item, index }) => (
+                        <HorizontalCourseCard
+                            course={item}
+                            containerStyle={{
+                                marginVertical: SIZES.radius,
+                                marginTop: index === 0 ? SIZES.radius : SIZES.padding,
+                                marginLeft: SIZES.padding,
+                            }}
+                        />
+                    )}
+                    ItemSeparatorComponent={() =>
+                        <LineDivider
+                            lineStyle={{
+                                backgroundColor: COLORS.gray20,
+                                width: '90%',
+                                marginLeft: SIZES.padding,
+                            }}
+                        />}
+                />
+            </SectionField>
+        )
+    }
     return (
         <View style={{
             flex: 1,
@@ -227,6 +266,8 @@ const Home = () => {
                 {/* render categories */}
                 {renderCategories()}
 
+                {/* render popular courses */}
+                {renderPopularCourses()}
             </ScrollView>
 
         </View>
