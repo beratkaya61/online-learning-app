@@ -18,12 +18,15 @@ const CategoryCard = ({
                 source={category?.thumbnail}
                 resizeMode="cover"
                 style={{
-                    ...containerStyle,
                     height: 150,
                     width: 200,
                     paddingVertical: SIZES.padding,
                     paddingHorizontal: SIZES.radius,
                     justifyContent: 'flex-end',
+                    ...containerStyle,
+                }}
+                imageStyle={{
+                    borderRadius: SIZES.radius,
                 }}
             >
                 <Text
