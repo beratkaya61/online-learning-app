@@ -20,7 +20,15 @@ const bottom_tabs = constants.bottom_tabs.map(bottom_tab => ({
 const TabIndicator = ({ measureLayout, scrollX }) => {
 
     const inputRange = measureLayout.map((_, i) => i * SIZES.width);
-
+    console.log('inputRange', inputRange);
+    // [0, 390, 780]
+    
+    console.log('measureLayout', measureLayout);
+    // [
+    //     {"height": 85, "width": 114, "x": 0, "y": 0}, 
+    //     {"height": 85, "width": 114, "x": 114, "y": 0}, 
+    //     {"height": 85, "width": 114, "x": 228, "y": 0}
+    // ]
     const tabIndicatorWidth = scrollX.interpolate({
         inputRange,
         outputRange: measureLayout.map((measure) => measure.width),
@@ -53,11 +61,11 @@ const BottomTabs = ({ onBottomTabPress, scrollX }) => {
 
     useEffect(() => {
 
-        let ml = [];
+        let ml = []; //measure layout
 
         //in this part, we need to measure the width,height,x,y of each tab and pass them as array to the parent container ref
-        bottom_tabs.forEach(bottom_tab => {
-            bottom_tab?.tabRef?.current?.measureLayout(bottomTabsContainerRef.current, (x, y, width, height) => {
+        bottom_tabs.forEach(item => {
+            item?.tabRef?.current?.measureLayout(bottomTabsContainerRef.current, (x, y, width, height) => {
                 ml.push({
                     x,
                     y,
@@ -79,6 +87,8 @@ const BottomTabs = ({ onBottomTabPress, scrollX }) => {
             style={{
                 flex: 1,
                 flexDirection: 'row',
+                borderRadius: SIZES.radius,
+                backgroundColor: COLORS.primary3,
             }}>
 
             {/*Tab Indicator */}
@@ -181,18 +191,15 @@ const MainLayout = () => {
                     paddingHorizontal: SIZES.padding,
                     paddingVertical: SIZES.radius,
                 }}>
-                <Shadow size={[SIZES.width - SIZES.padding * 2, 85]}>
-                    <View
-                        style={{
-                            flex: 1,
-                            borderRadius: SIZES.radius,
-                            backgroundColor: COLORS.primary3,
-                        }}>
-                        <BottomTabs
-                            onBottomTabPress={onBottomTabPress}
-                            scrollX={scrollX}
-                        />
-                    </View>
+                <Shadow
+                    viewStyle={{
+                        borderRadius: SIZES.radius,
+                    }}
+                    size={[SIZES.width - SIZES.padding * 2, 85]}>
+                    <BottomTabs
+                        onBottomTabPress={onBottomTabPress}
+                        scrollX={scrollX}
+                    />
                 </Shadow>
             </View>
         );
