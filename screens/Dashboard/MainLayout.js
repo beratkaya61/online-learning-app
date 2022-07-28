@@ -155,7 +155,7 @@ const MainLayout = () => {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     pagingEnabled
-                    //scrollEnabled={false}
+                    scrollEnabled={false}
                     snapToAlignment="center"
                     snapToInterval={SIZES.width}
                     decelerationRate="fast"
