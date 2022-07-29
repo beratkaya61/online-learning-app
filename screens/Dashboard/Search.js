@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-unused-vars */
 /* eslint-disable eol-last */
@@ -10,11 +11,12 @@ import {
     View,
     Text,
     ScrollView,
+    Image,
 } from 'react-native';
 
 import TextButton from '../../components/TextButton';
 
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { Shadow } from 'react-native-shadow-2';
 
 import Animated, {
@@ -31,6 +33,12 @@ import { CategoryCard } from '../../components';
 const Search = () => {
 
     const scrollViewRef = useRef(null);
+
+    const translationY = useSharedValue(0);
+
+    const onScroll = useAnimatedScrollHandler((event) => {
+        translationY.value = event.contentOffset.y;
+    })
 
     function renderTopSearchBar() {
         return (
@@ -115,6 +123,73 @@ const Search = () => {
         )
     }
 
+
+    function renderSearchBar() {
+
+        const inputRange = [0, 50];
+
+        const searchBarAnimatedStyle = useAnimatedStyle(() => {
+            return {
+                height: interpolate(translationY.value,
+                    inputRange,
+                    [50, 0], //output range for height
+                    Extrapolate.CLAMP,
+                ),
+                //if you want to use the opacity, you may not be able to use the heght property
+                opacity: interpolate(translationY.value,
+                    inputRange,
+                    [1, 0],
+                    Extrapolate.CLAMP,
+                ),
+            };
+        });
+
+        return (
+            <Animated.View
+                style={[{
+                    position: 'absolute',
+                    top: 50,
+                    left: 0,
+                    right: 0,
+                    height: 50,
+                    paddingHorizontal: SIZES.padding,
+                }, searchBarAnimatedStyle]}>
+                <Shadow>
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingHorizontal: SIZES.radius,
+                            borderRadius: SIZES.base,
+                            width: SIZES.width - (SIZES.padding * 2),
+                        }}>
+                        <Image
+                            source={icons.search}
+                            resizeMode="contain"
+                            style={{
+                                tintColor: COLORS.gray40,
+                                width: 25,
+                                height: 25,
+                            }}
+                        />
+
+                        <TextInput
+                            style={{
+                                flex: 1,
+                                marginLeft: SIZES.base,
+                                ...FONTS.h4,
+                            }}
+                            placeholder="Search for Topics,Courses & Educations"
+                            value=""
+                            placeholderTextColor={COLORS.gray}
+                        />
+
+                    </View>
+                </Shadow>
+            </Animated.View>
+        )
+    }
     return (
         <View
             style={{
@@ -132,6 +207,19 @@ const Search = () => {
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={16}
                 keyboardDismissMode="on-drag"
+                onScroll={onScroll}
+                onScrollEndDrag={(event) => {
+                    if (event.nativeEvent.contentOffset.y > 10 &&
+                        event.nativeEvent.contentOffset.y < 50) {
+
+                        //When scrollview scroll is ended, scrollview position is less than 50 and more than 10, then it scroll to y=50,
+                        //because search bar height is 50 (to hide it)
+                        scrollViewRef.current.scrollTo({
+                            y: 50, //y position from top of the screen (you must think it as position absolute)
+                            animated: true,
+                        });
+                    }
+                }}
             >
 
                 {/*Top Search Bar */}
@@ -139,8 +227,11 @@ const Search = () => {
 
                 {/*Browse Categories */}
                 {renderBrowseCategories()}
-
             </Animated.ScrollView>
+
+            {/* Render Search Bar */}
+            {renderSearchBar()}
+
         </View>
     )
 }
